@@ -4,7 +4,7 @@ import os
 from PIL import Image
 import cv2
 from scipy import misc
-from scalePredNet import scalePredNet
+from src.scalePredNet import scalePredNet
 #import cPickle
 import pickle
 import gzip
@@ -22,7 +22,7 @@ import matplotlib.image as mpimg
 
 from pylab import *
 import pylab
-from conVAE import createConvVAE
+from src.conVAE import createConvVAE
 import skimage.transform
 from skimage import measure
 import scipy.io as sio
@@ -155,7 +155,7 @@ def cropPyramidPatchs(seeds = None, img = None, scales = [12, 15, 18, 21, 25,30]
     return oneImgPatches
 
 
-def predScale_Seg(imgPath = '../data/cell_det_data/test/3/', detResPath = '../data/cell_det_data/res/3/', segResPath = '../data/cell_seg_data/res/3/', bdxScales = [12, 15, 18, 21, 25, 30, 35, 39], resizeto=[1008, 1008]):
+def predScale_Seg(scalePredModelFile = './models/cellSizePred_vgg16_model/checkpoints/weights.239-0.10.hdf5', segModel= './models/convVAE_model/weights.00-630.35.hdf5', imgPath = '../data/cell_det_data/test/3/', detResPath = '../data/cell_det_data/res/3/', segResPath = '../data/cell_seg_data/res/3/', bdxScales = [12, 15, 18, 21, 25, 30, 35, 39], resizeto=[1008, 1008]):
     detFiles = glob.glob(detResPath + '*.npy')
     detFiles = sorted(detFiles)
     imgFiles = glob.glob(imgPath + '*.png')
@@ -163,9 +163,9 @@ def predScale_Seg(imgPath = '../data/cell_det_data/test/3/', detResPath = '../da
     
     # create scale prediction model
     scalePredModel = scalePredNet()
-    scale_Pred_Model = scalePredModel.createNet(imgShape=[64, 64])
+    scale_Pred_Model = scalePredModel.createNet(modelPath=scalePredModelFile, imgShape=[64, 64])
     vae = createConvVAE()
-    vae.load_weights(filepath='../models/convVAE_model/weights.00-630.35.hdf5', by_name = True)
+    vae.load_weights(filepath = segModel, by_name = True)
     
     # create segmentation model
     '''f = gzip.open('basic0.pkl.gz', 'rb')

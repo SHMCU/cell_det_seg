@@ -1,4 +1,4 @@
-from networkUtils import convLayer, convLayer_upsample, getPretrainedModel
+from src.networkUtils import convLayer, convLayer_upsample, getPretrainedModel
 import tensorflow as tf
 import os
 import numpy as np
